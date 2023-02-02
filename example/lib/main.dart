@@ -59,6 +59,14 @@ class _MyAppState extends State<MyApp> {
     print(result);
   }
 
+shareOnLinkedin() async {
+    String result = await FlutterSocialContentShare.share(
+        type: ShareType.linkedinWithImageUrl,
+        imageUrl:
+            "https://post.healthline.com/wp-content/uploads/2020/09/healthy-eating-ingredients-732x549-thumbnail-732x549.jpg");
+    print(result);
+  }
+
   /// SHARE ON WHATSAPP CALL
   shareWatsapp() async {
     String result = await FlutterSocialContentShare.shareOnWhatsapp(
@@ -94,6 +102,12 @@ class _MyAppState extends State<MyApp> {
         body: Column(
           children: <Widget>[
             Text('Running on: $_platformVersion\n'),
+TextButton(
+              child: Text("Share to linkedin button"),
+              onPressed: () {
+                shareOnLinkedin();
+              },
+            ),
             TextButton(
               child: Text("Share to facebook button"),
               onPressed: () {

@@ -60,6 +60,21 @@ public class SwiftFlutterSocialContentSharePlugin: NSObject, FlutterPlugin, Shar
                         self.result?("Could not load the image")
                     }
                     break
+case "ShareType.linkedinWithImageUrl":
+                    let url = URL(string: shareImageUrl)
+                    if let urlData = url {
+                        let data = try? Data(contentsOf: urlData)
+                        if let datas = data {
+                            shareLinkedinWithImageUrl(image: UIImage(data: datas) ?? UIImage()) { (flag) in
+                            }
+                        }else{
+                            self.result?("Something went wrong")
+                        }
+                    }
+                    else{
+                        self.result?("Could not load the image")
+                    }
+                    break
                 case "ShareType.more":
                     self.result?("Method not implemented")
                     break
@@ -153,6 +168,47 @@ public class SwiftFlutterSocialContentSharePlugin: NSObject, FlutterPlugin, Shar
                     }
                 } else{
                     self.result?("Instagram app is not installed on your device")
+                }
+            }
+        } catch {
+            if let result = result {
+                self.result?("Failure")
+                result(false)
+            }
+        }
+    }
+
+private func shareLinkedinWithImageUrl(image: UIImage, result:((Bool)->Void)? = nil) {
+        guard let linkedinURL = NSURL(string: "linkedin://app") else {
+            if let result = result {
+                self.result?("Linkedin app is not installed on your device")
+                result(false)
+            }
+            return
+        }
+        
+        //Save image on device
+        do {
+            try PHPhotoLibrary.shared().performChangesAndWait{
+                let request = PHAssetChangeRequest.creationRequestForAsset(from: image)
+                let assetID = request.placeholderForCreatedAsset?.localIdentifier ?? ""
+                self.shareURL = "linkedin://library?LocalIdentifier=" + assetID
+                
+                //Share image
+                if UIApplication.shared.canOpenURL(linkedinURL as URL) {
+                    if let sharingUrl = self.shareURL {
+                        if let urlForRedirect = NSURL(string: sharingUrl) {
+                            if #available(iOS 10.0, *) {
+                                UIApplication.shared.open(urlForRedirect as URL, options: [:], completionHandler: nil)
+                            }
+                            else{
+                                UIApplication.shared.openURL(urlForRedirect as URL)
+                            }
+                        }
+                        self.result?("Success")
+                    }
+                } else{
+                    self.result?("Linkedin app is not installed on your device")
                 }
             }
         } catch {
