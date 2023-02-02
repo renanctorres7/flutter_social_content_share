@@ -61,19 +61,8 @@ public class SwiftFlutterSocialContentSharePlugin: NSObject, FlutterPlugin, Shar
                     }
                     break
 case "ShareType.linkedinWithImageUrl":
-                    let url = URL(string: shareImageUrl)
-                    if let urlData = url {
-                        let data = try? Data(contentsOf: urlData)
-                        if let datas = data {
-                            shareLinkedinWithImageUrl(image: UIImage(data: datas) ?? UIImage()) { (flag) in
-                            }
-                        }else{
-                            self.result?("Something went wrong")
-                        }
-                    }
-                    else{
-                        self.result?("Could not load the image")
-                    }
+                     shareFacebookWithoutImage(withQuote: shareQuote, withUrl: shareUrl)
+                    break
                     break
                 case "ShareType.more":
                     self.result?("Method not implemented")
